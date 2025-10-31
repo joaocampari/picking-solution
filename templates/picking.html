@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Picking - Gestão de Slots e Picking{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="border-4 border-dashed border-gray-200 rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Picking (Coleta de Devices)</h2>
+
+        <form id="picking-form" hx-post="/picking/plan/htmx" hx-encoding="multipart/form-data" hx-target="#picking-result" hx-swap="innerHTML" hx-indicator="#picking-loading" hx-disabled-elt="#picking-submit" class="mb-6">
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="mb-4">
+                    <label for="device_ids" class="block text-sm font-medium text-gray-700 mb-2">
+                        Device IDs para coleta (um por linha ou separados por vírgula):
+                    </label>
+                    <textarea
+                        id="device_ids"
+                        name="device_ids"
+                        rows="10"
+                        class="shadow-sm focus:ring-blue-500 focus:border-blue-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                        placeholder="DEV001&#10;DEV002&#10;DEV003"
+                    ></textarea>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">
+                        Ou fazer upload de CSV:
+                    </label>
+                    <input
+                        type="file"
+                        name="csv_file"
+                        accept=".csv"
+                        class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    />
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <button
+                        id="picking-submit"
+                        type="submit"
+                        class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    >
+                        Gerar Plano de Picking
+                    </button>
+                    <span id="picking-loading" class="htmx-indicator inline-flex items-center text-sm text-gray-500">
+                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+                        </svg>
+                        Gerando plano...
+                    </span>
+                </div>
+            </div>
+        </form>
+
+        <div id="picking-result"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+    .htmx-indicator { display: none; }
+    .htmx-request .htmx-indicator { display: inline-flex; }
+    .htmx-request.htmx-indicator { display: inline-flex; }
+</style>
+<script>
+    // Normalizar vírgulas -> quebras de linha
+    document.getElementById('device_ids').addEventListener('input', function(e) {
+        let value = e.target.value.replace(/,/g, '\n');
+        value = value.split('\n').filter(line => line.trim()).join('\n');
+        if (value !== e.target.value) {
+            e.target.value = value;
+        }
+    });
+
+    // Garantir que Enter no textarea insira quebra de linha e NÃO submeta o form
+    const ta = document.getElementById('device_ids');
+    const form = document.getElementById('picking-form');
+    ta.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            const start = ta.selectionStart;
+            const end = ta.selectionEnd;
+            const val = ta.value;
+            ta.value = val.substring(0, start) + '\n' + val.substring(end);
+            ta.selectionStart = ta.selectionEnd = start + 1;
+        }
+    });
+</script>
+{% endblock %}
+

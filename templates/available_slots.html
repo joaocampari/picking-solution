@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Slots Livres - Gestão de Slots e Picking{% endblock %}
+
+{% block content %}
+<div class="px-4 py-6 sm:px-0">
+    <div class="border-4 border-dashed border-gray-200 rounded-lg p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Slots Livres Próximos</h2>
+
+        <form hx-get="/slots/available/htmx" hx-target="#slots-result" hx-swap="innerHTML" class="mb-6">
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+                    <div>
+                        <label for="start_rua" class="block text-sm font-medium text-gray-700 mb-1">Rua Inicial</label>
+                        <input
+                            type="number"
+                            id="start_rua"
+                            name="start_rua"
+                            min="1"
+                            max="3"
+                            value="1"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                        />
+                    </div>
+                    <div>
+                        <label for="start_prateleira" class="block text-sm font-medium text-gray-700 mb-1">Prateleira Inicial</label>
+                        <input
+                            type="text"
+                            id="start_prateleira"
+                            name="start_prateleira"
+                            value="P1"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                        />
+                    </div>
+                    <div>
+                        <label for="start_linha" class="block text-sm font-medium text-gray-700 mb-1">Linha Inicial</label>
+                        <input
+                            type="number"
+                            id="start_linha"
+                            name="start_linha"
+                            min="1"
+                            max="24"
+                            value="1"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                        />
+                    </div>
+                    <div>
+                        <label for="start_coluna" class="block text-sm font-medium text-gray-700 mb-1">Coluna Inicial</label>
+                        <input
+                            type="number"
+                            id="start_coluna"
+                            name="start_coluna"
+                            min="1"
+                            max="40"
+                            value="1"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                        />
+                    </div>
+                    <div>
+                        <label for="limit" class="block text-sm font-medium text-gray-700 mb-1">Limite</label>
+                        <input
+                            type="number"
+                            id="limit"
+                            name="limit"
+                            min="1"
+                            max="1000"
+                            value="50"
+                            class="shadow-sm focus:ring-blue-500 focus:border-blue-500 block w-full sm:text-sm border border-gray-300 rounded-md p-2"
+                        />
+                    </div>
+                </div>
+
+                <button
+                    type="submit"
+                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                    Buscar Slots Livres
+                </button>
+            </div>
+        </form>
+
+        <div id="slots-result">
+            <div class="bg-white shadow rounded-lg p-6">
+                <p class="text-gray-500 text-center">Preencha o formulário e clique em "Buscar Slots Livres"</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

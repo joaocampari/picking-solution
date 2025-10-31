@@ -1,0 +1,82 @@
+<div id="assign-print-area" class="bg-white shadow rounded-lg p-6">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="text-lg font-medium text-gray-900">Resultado da Alocação</h3>
+        <button
+            type="button"
+            onclick="window.print()"
+            class="inline-flex items-center gap-2 py-2 px-3 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 print:hidden"
+            title="Imprimir lista para conferência"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2h-2V7a2 2 0 00-2-2H9a2 2 0 00-2 2v2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4H7v4a2 2 0 002 2z" /></svg>
+            Imprimir
+        </button>
+    </div>
+
+    <style>
+    @media print {
+        /* Mostrar apenas a área do resultado de alocação */
+        body * { visibility: hidden !important; }
+        #assign-print-area, #assign-print-area * { visibility: visible !important; }
+        #assign-print-area { position: absolute; left: 0; top: 0; width: 100%; background: #fff; }
+        /* Tabela legível no papel */
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #333; padding: 6px; font-size: 12px; color: #000 !important; }
+        thead { background: #f2f2f2 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+    </style>
+
+    {% if assigned %}
+    <div class="overflow-x-auto mb-4">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Device ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Slot (Código Humano)</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Linha</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Coluna</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for item in assigned %}
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ loop.index }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.device_id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.human_code }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.row }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ item.col }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
+    {% if failed %}
+    <div class="mb-4">
+        <h3 class="text-lg font-medium text-red-900 mb-2">Devices que Falharam ao Alocar</h3>
+        <ul class="list-disc list-inside text-sm text-red-600">
+            {% for device_id in failed %}
+            <li>{{ device_id }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    {% if current_position %}
+    <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+        <p class="text-sm text-blue-900">
+            <strong>Posição atual após alocação:</strong> {{ current_position.human_code }}
+        </p>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="mt-4 p-4 bg-red-50 rounded-lg">
+        <p class="text-sm text-red-900">
+            <strong>Erro:</strong> {{ error }}
+        </p>
+    </div>
+    {% endif %}
+</div>
+
